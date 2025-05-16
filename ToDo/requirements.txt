@@ -1,0 +1,2 @@
+python_version >= "3.9"
+django>=3.2.14
