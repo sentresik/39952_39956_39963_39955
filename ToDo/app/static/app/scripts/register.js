@@ -39,12 +39,12 @@ document.getElementById("registerBtn").addEventListener("click", function () {
     }
 
     // Wyslanie danych do backendu
-    fetch("http://localhost:5000/api/register", {
+    fetch("http://localhost:8000/api/register/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password, confirmPassword})
     })
         .then(res => res.json())
         .then(data => {
