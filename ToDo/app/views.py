@@ -76,27 +76,40 @@ def edit_requests_view(request):
 
 # Endpointy API
 @csrf_exempt
-def api_login(request):
-    """API endpoint for login via JavaScript."""
+def api_register(request):
+    """API endpoint for user registration."""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            username = data.get('email')  # Mapujemy email na username
+            email = data.get('email')
             password = data.get('password')
+            confirm_password = data.get('confirmPassword')
 
-            if not username or not password:
-                return JsonResponse({'success': False, 'message': 'Missing email or password'}, status=400)
+            if not email or not password or not confirm_password:
+                return JsonResponse({'success': False, 'message': 'All fields are required'}, status=400)
 
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return JsonResponse({'success': True})
-            else:
-                return JsonResponse({'success': False, 'message': 'Invalid email or password'}, status=401)
+            if password != confirm_password:
+                return JsonResponse({'success': False, 'message': 'Passwords do not match'}, status=400)
+
+            if (
+                len(password) < 6 or
+                len(password) > 20 or
+                not any(c.islower() for c in password) or
+                not any(c.isupper() for c in password) or
+                not any(c.isdigit() for c in password)
+            ):
+                return JsonResponse({'success': False, 'message': 'Password must be 6 to 20 characters long and include a lowercase letter, an uppercase letter, and a number.'}, status=400)
+
+            if User.objects.filter(email=email).exists() or User.objects.filter(username=email).exists():
+                return JsonResponse({'success': False, 'message': 'Email already exists'}, status=400)
+
+            user = User.objects.create_user(username=email, email=email, password=password)
+            user.save()
+            login(request, user)
+            return JsonResponse({'success': True})
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Invalid JSON'}, status=400)
     return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
-
 @csrf_exempt
 def api_register(request):
     """API endpoint for user registration."""

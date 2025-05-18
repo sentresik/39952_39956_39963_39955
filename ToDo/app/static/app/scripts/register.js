@@ -44,7 +44,7 @@ document.getElementById("registerBtn").addEventListener("click", function () {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password, confirmPassword})
+        body: JSON.stringify({ email, password, confirmPassword })
     })
         .then(res => res.json())
         .then(data => {

@@ -23,7 +23,7 @@ document.getElementById("loginBtn").addEventListener("click", function () {
     }
 
     // Wyslanie danych do backendu (przykladowy endpoint)
-    fetch("http://localhost:8000/api/login/", {
+    fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

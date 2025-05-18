@@ -6,7 +6,7 @@ from . import forms
 from datetime import datetime
 
 router = DefaultRouter()
-router.register(r'tasks', views.TaskViewSet, basename='task')  # Dodajemy basename
+router.register(r'tasks', views.TaskViewSet, basename='task')
 
 urlpatterns = [
     path('', views.home, name='home'),
