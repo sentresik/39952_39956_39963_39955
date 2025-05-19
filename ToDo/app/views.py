@@ -1,7 +1,3 @@
-"""
-Definition of views.
-"""
-
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse
@@ -20,7 +16,7 @@ def home(request):
     """Renders the home page (index.html - lista zadań)."""
     assert isinstance(request, HttpRequest)
     if not request.user.is_authenticated:
-        return redirect('login')
+        return redirect('start')
     return render(
         request,
         'app/index.html',
@@ -30,18 +26,6 @@ def home(request):
         }
     )
 
-def contact(request):
-    """Renders the contact page."""
-    assert isinstance(request, HttpRequest)
-    return render(
-        request,
-        'app/contact.html',
-        {
-            'title': 'Contact',
-            'message': 'Your contact page.',
-            'year': datetime.now().year,
-        }
-    )
 
 def about(request):
     """Renders the about page."""
@@ -110,38 +94,26 @@ def api_register(request):
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Invalid JSON'}, status=400)
     return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
+
 @csrf_exempt
-def api_register(request):
-    """API endpoint for user registration."""
+def api_login(request):
+    """API endpoint for user login."""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             email = data.get('email')
             password = data.get('password')
-            confirm_password = data.get('confirmPassword')
 
-            if not email or not password or not confirm_password:
-                return JsonResponse({'success': False, 'message': 'All fields are required'}, status=400)
+            if not email or not password:
+                return JsonResponse({'success': False, 'message': 'Email and password are required'}, status=400)
 
-            if password != confirm_password:
-                return JsonResponse({'success': False, 'message': 'Passwords do not match'}, status=400)
-
-            if (
-                len(password) < 6 or
-                len(password) > 20 or
-                not any(c.islower() for c in password) or
-                not any(c.isupper() for c in password) or
-                not any(c.isdigit() for c in password)
-            ):
-                return JsonResponse({'success': False, 'message': 'Password must be 6 to 20 characters long and include a lowercase letter, an uppercase letter, and a number.'}, status=400)
-
-            if User.objects.filter(email=email).exists() or User.objects.filter(username=email).exists():
-                return JsonResponse({'success': False, 'message': 'Email already exists'}, status=400)
-
-            user = User.objects.create_user(username=email, email=email, password=password)
-            user.save()
-            login(request, user)
-            return JsonResponse({'success': True})
+            # Uwierzytelnianie użytkownika
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                return JsonResponse({'success': True, 'message': 'Login successful'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Invalid email or password'}, status=400)
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Invalid JSON'}, status=400)
     return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)

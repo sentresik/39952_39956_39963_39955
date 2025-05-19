@@ -10,11 +10,10 @@ router.register(r'tasks', views.TaskViewSet, basename='task')
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('contact/', views.contact, name='contact'),
     path('about/', views.about, name='about'),
     path('login/',
          LoginView.as_view(
-             template_name='app/login.html',
+             template_name='app/start.html',
              authentication_form=forms.BootstrapAuthenticationForm,
              extra_context=dict(title='Log in', year=datetime.now().year)
          ),

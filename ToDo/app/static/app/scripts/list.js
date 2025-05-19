@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById('taskList');
 
-    fetch('/api/tasks')
+    fetch('/api/tasks/')
         .then(res => res.json())
         .then(tasks => {
             taskList.innerHTML = '';

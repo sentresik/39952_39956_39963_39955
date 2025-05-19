@@ -23,7 +23,7 @@ document.getElementById("loginBtn").addEventListener("click", function () {
     }
 
     // Wyslanie danych do backendu (przykladowy endpoint)
-    fetch("http://localhost:5000/api/login", {
+    fetch("http://localhost:8000/api/login/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -34,7 +34,7 @@ document.getElementById("loginBtn").addEventListener("click", function () {
         .then(data => {
             if (data.success) {
                 // Mozesz zapisac token itp.
-                window.location.href = "index.html"; // przekierowanie do aplikacji
+                window.location.href = "/start/"; // przekierowanie do aplikacji
             } else {
                 errorMsg.textContent = data.message || "Invalid email or password.";
             }
