@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Funkcje globalne (musza byæ w window)
+    // Funkcje globalne (musza byï¿½ w window)
     window.deleteTask = (id) => {
         fetch(`/api/tasks/${id}`, { method: 'DELETE' }).then(loadTasks);
     };

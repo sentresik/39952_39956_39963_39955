@@ -1,12 +1,15 @@
+// app/static/app/scripts/login.js
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 document.getElementById("loginBtn").addEventListener("click", function () {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const errorMsg = document.getElementById("errorMsg");
 
-    // Reset komunikatu
     errorMsg.textContent = "";
 
-    // WALIDACJA frontendowa
     if (!email) {
         errorMsg.textContent = "Please enter your email address.";
         return;
@@ -22,30 +25,30 @@ document.getElementById("loginBtn").addEventListener("click", function () {
         return;
     }
 
-    // Wyslanie danych do backendu (przykladowy endpoint)
-    fetch("http://localhost:8000/api/login/", {
+    fetch("/api/login/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
+        credentials: "include"
     })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            return res.json();
+        })
         .then(data => {
+            console.log("Response from API:", data);
             if (data.success) {
-                // Mozesz zapisac token itp.
-                window.location.href = "/start/"; // przekierowanie do aplikacji
+                window.location.href = "/index/"; // Przekierowanie
             } else {
                 errorMsg.textContent = data.message || "Invalid email or password.";
             }
         })
         .catch(err => {
-            console.error(err);
+            console.error("Fetch error:", err);
             errorMsg.textContent = "Login error occurred.";
         });
 });
-
-function validateEmail(email) {
-    // Prosty regex do walidacji adresu e-mail
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
