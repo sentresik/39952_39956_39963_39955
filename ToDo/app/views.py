@@ -92,7 +92,7 @@ def api_register(request):
 
             if password != confirm_password:
                 logger.warning("Passwords do not match")
-                return JsonResponse({'success': False, 'message': 'Passwords are not the same'}, status=400)
+                return JsonResponse({'success': False, 'message': 'Passwords do not match'}, status=400)
 
             if (
                 len(password) < 6 or
@@ -127,7 +127,8 @@ def api_register(request):
                 samesite='Lax',
                 secure=False,
                 max_age=3600,
-                path='/'
+                path='/',
+                domain=None,
             )
             response.set_cookie(
                 'refresh_token',
@@ -136,7 +137,8 @@ def api_register(request):
                 samesite='Lax',
                 secure=False,
                 max_age=86400,
-                path='/'
+                path='/',
+                domain=None,
             )
             logger.info(f"User {email} registered successfully")
             return response
@@ -149,7 +151,6 @@ def api_register(request):
     logger.warning("Invalid HTTP method in api_register")
     return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
 
-# app/views.py (fragment)
 @csrf_exempt
 def api_login(request):
     """API endpoint for user login."""
@@ -179,7 +180,8 @@ def api_login(request):
                     samesite='Lax',
                     secure=False,
                     max_age=3600,
-                    path='/'
+                    path='/',
+                    domain=None,
                 )
                 response.set_cookie(
                     'refresh_token',
@@ -188,7 +190,8 @@ def api_login(request):
                     samesite='Lax',
                     secure=False,
                     max_age=86400,
-                    path='/'
+                    path='/',
+                    domain=None,
                 )
                 logger.info(f"User {email} logged in successfully with JWT")
                 return response
