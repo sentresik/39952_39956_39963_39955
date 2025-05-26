@@ -21,3 +21,6 @@ packages/
 
 # Ignore other common artifacts
 *.log
+
+__pycache__/
+*.py[cod]
