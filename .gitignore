@@ -1,5 +1,23 @@
-.vs/39952_39956_39963_39955/FileContentIndex/052d908d-4a8c-45d5-9c69-146c067444c9.vsidx
-.vs/39952_39956_39963_39955/v17/.wsuo
-.vs/39952_39956_39963_39955/v17/DocumentLayout.json
-.vs/slnx.sqlite
-.vs/VSWorkspaceState.json
+# Ignore Visual Studio user-specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore build results
+[Bb]in/
+[Oo]bj/
+
+# Ignore Visual Studio Code settings (if using VS Code)
+.vscode/
+
+# Ignore Visio files
+*.vsdx
+
+# Ignore NuGet packages
+packages/
+*.nupkg
+
+# Ignore other common artifacts
+*.log
