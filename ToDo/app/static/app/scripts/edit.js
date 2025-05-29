@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(tasks => {
                 taskList.innerHTML = '';
                 tasks.forEach(task => {
-                    // Użyj task.title zamiast task.name
+                    // Uzyj task.title zamiast task.name
                     const li = document.createElement('li');
                     li.innerHTML = `
                         <span contenteditable="true">${task.title}</span>

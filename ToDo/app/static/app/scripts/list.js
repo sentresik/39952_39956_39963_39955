@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById('taskList');
+    const logoutBtn = document.getElementById('logoutBtn');
 
+    // Zaladuj zadania
     fetch('http://127.0.0.1:8000/api/tasks/', {
         method: 'GET',
         headers: {
             "Content-Type": "application/json"
         },
-        credentials: "include" // Ważne dla ciasteczek
+        credentials: "include" // Wazne dla ciasteczek
     })
         .then(res => {
             if (!res.ok) {
@@ -32,4 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to load tasks:', err);
             window.location.href = "/start/";
         });
+
+    // Obsluga przycisku logout
+    logoutBtn.addEventListener('click', () => {
+        // Na razie tylko przekierowanie — backend bedzie podpiety pozniej
+        window.location.href = '/start/';
+    });
 });
