@@ -1,4 +1,5 @@
 from datetime import datetime
+import hashlib
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth import authenticate
@@ -9,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 import json
 import logging
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Task
+from .models import Task, UserAccount
 from .serializers import TaskSerializer
 
 logger = logging.getLogger(__name__)
@@ -206,6 +207,28 @@ def api_login(request):
             return JsonResponse({'success': False, 'message': 'Server error'}, status=500)
     logger.warning("Invalid HTTP method in api_login")
     return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
+@csrf_exempt
+def custom_login(request):
+    if request.method != "POST":
+        return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
+    try:
+        data = json.loads(request.body)
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+            return JsonResponse({'success': False, 'message': 'Missing credentials'}, status=400)
+
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        user = UserAccount.objects.filter(email=email, password_hash=password_hash).first()
+
+        if user:
+            return JsonResponse({'success': True, 'message': 'Authenticated'})
+        return JsonResponse({'success': False, 'message': 'Invalid credentials'}, status=401)
+    except Exception as e:
+        logger.error(f"Login error: {e}")
+        return JsonResponse({'success': False, 'message': 'Server error'}, status=500)
+
 # Task API
 class TaskViewSet(viewsets.ModelViewSet):
     """API for managing tasks."""
@@ -221,3 +244,23 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Assign the task to the authenticated user."""
         serializer.save(user=self.request.user)
+
+@csrf_exempt
+def api_logout(request):
+    """API endpoint for user logout."""
+    if request.method == 'POST':
+        try:
+            # Wyczyść ciasteczka z tokenami
+            response = JsonResponse({
+                'success': True,
+                'message': 'Logout successful'
+            })
+            response.delete_cookie('access_token')
+            response.delete_cookie('refresh_token')
+            logger.info(f"User {request.user} logged out successfully")
+            return response
+        except Exception as e:
+            logger.error(f"Unexpected error during logout: {str(e)}")
+            return JsonResponse({'success': False, 'message': 'Server error'}, status=500)
+    logger.warning("Invalid HTTP method in api_logout")
+    return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
