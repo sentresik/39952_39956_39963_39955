@@ -7,3 +7,8 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = ['id', 'title', 'created_at', 'user']
         read_only_fields = ['user', 'created_at']
+
+    def update(self, instance, validated_data):
+        # Zachowaj oryginalnego uzytkownika, nawet jesli nie jest podany
+        validated_data['user'] = instance.user
+        return super().update(instance, validated_data)
