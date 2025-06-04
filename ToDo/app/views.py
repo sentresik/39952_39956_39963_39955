@@ -244,3 +244,23 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Assign the task to the authenticated user."""
         serializer.save(user=self.request.user)
+
+@csrf_exempt
+def api_logout(request):
+    """API endpoint for user logout."""
+    if request.method == 'POST':
+        try:
+            # Wyczyść ciasteczka z tokenami
+            response = JsonResponse({
+                'success': True,
+                'message': 'Logout successful'
+            })
+            response.delete_cookie('access_token')
+            response.delete_cookie('refresh_token')
+            logger.info(f"User {request.user} logged out successfully")
+            return response
+        except Exception as e:
+            logger.error(f"Unexpected error during logout: {str(e)}")
+            return JsonResponse({'success': False, 'message': 'Server error'}, status=500)
+    logger.warning("Invalid HTTP method in api_logout")
+    return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
