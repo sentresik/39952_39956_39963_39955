@@ -5,17 +5,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Zaladuj istniejace zadania
     function loadTasks() {
-        fetch('/api/tasks')
+        fetch('http://127.0.0.1:8000/api/tasks/')
             .then(res => res.json())
             .then(tasks => {
                 taskList.innerHTML = '';
                 tasks.forEach(task => {
+                    // Uzyj task.title zamiast task.name
                     const li = document.createElement('li');
                     li.innerHTML = `
-                        <span contenteditable="true">${task.name}</span>
-                        <button onclick="deleteTask(${task.id})">Delete</button>
-                        <button onclick="updateTask(${task.id}, this.previousElementSibling.textContent)">Save</button>
+                        <span contenteditable="true" class="editable">${task.title}</span>
+                        <button class="deleteBtn">Delete</button>
+                        <button class="saveBtn">Save</button>
                     `;
+
+                    const span = li.querySelector('.editable');
+                    const deleteBtn = li.querySelector('.deleteBtn');
+                    const saveBtn = li.querySelector('.saveBtn');
+
+                    // Obsluga usuwania
+                    deleteBtn.addEventListener('click', () => deleteTask(task.id));
+
+                    // Obsluga zapisywania edycji
+                    saveBtn.addEventListener('click', () => updateTask(task.id, span.textContent));
+
                     taskList.appendChild(li);
                 });
             });
@@ -23,29 +35,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Dodaj nowe zadanie
     addTaskBtn.addEventListener('click', () => {
-        const name = newTaskInput.value.trim();
-        if (name) {
-            fetch('/api/tasks', {
+        const title = newTaskInput.value.trim();
+        if (title) {
+            fetch('http://127.0.0.1:8000/api/tasks/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name })
+                body: JSON.stringify({ title: title })
             }).then(loadTasks);
             newTaskInput.value = '';
         }
     });
 
-    // Funkcje globalne (musza byæ w window)
+    // Funkcje globalne (musza byc w window)
     window.deleteTask = (id) => {
-        fetch(`/api/tasks/${id}`, { method: 'DELETE' }).then(loadTasks);
+        fetch(`http://127.0.0.1:8000/api/tasks/${id}`, { method: 'DELETE' }).then(loadTasks);
     };
 
-    window.updateTask = (id, name) => {
-        fetch(`/api/tasks/${id}`, {
-            method: 'PUT',
+    window.updateTask = (id, title) => {
+        fetch(`http://127.0.0.1:8000/api/tasks/${id}/`, {
+
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name })
-        }).then(loadTasks);
+            body: JSON.stringify({ title: title })
+        }).then(() => {
+            loadTasks();
+            showNotification("Task updated successfully!");
+        });
     };
 
     loadTasks();
 });
+
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.display = 'block';
+
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}

@@ -1,18 +1,22 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo List</title>
-    <link rel="stylesheet" href="../../static/app/content/style.css">
+    <link rel="stylesheet" href="{% static 'app/content/style.css' %}">
 </head>
 <body>
-    <h1><span style="color:white">To</span>Do List</h1>
+    <div class="container">
+        <h1><span style="color:white">To</span>Do List</h1>
 
-    <ul id="taskList">
-        <!-- Zadania bede dynamicznie wstawiane tutaj -->
-    </ul>
+        <p><a href="/edit/">Edit ToDo tasks</a></p>
+        <button id="logoutBtn">Logout</button>
 
-    <script src="../../static/app/scripts/list.js"></script>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script src="{% static 'app/scripts/list.js' %}"></script>
 </body>
 </html>
