@@ -24,9 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
             taskList.innerHTML = '';
             tasks.forEach(task => {
                 const li = document.createElement('li');
+
+                // Checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = task.completed;
+                checkbox.addEventListener('change', () => {
+                    toggleCompleted(task.id, checkbox.checked);
+                    li.classList.toggle('completed', checkbox.checked);
+                });
+
+                // Tytul
                 const taskSpan = document.createElement('span');
                 taskSpan.textContent = task.title;
+
+                li.appendChild(checkbox);
                 li.appendChild(taskSpan);
+
+                if (task.completed) {
+                    li.classList.add('completed');
+                }
+
                 taskList.appendChild(li);
             });
         })
@@ -35,14 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = "/start/";
         });
 
-    // Obsługa przycisku logout
+    // Obsluga przycisku logout
     logoutBtn.addEventListener('click', () => {
         fetch('http://127.0.0.1:8000/api/logout/', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
             },
-            credentials: "include" // Ważne dla ciasteczek
+            credentials: "include" // Wazne dla ciasteczek
         })
             .then(res => {
                 if (!res.ok) {
@@ -53,10 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.success) {
                     console.log("Logout successful");
-                    // Wyczyść ciasteczka po stronie klienta (na wszelki wypadek)
+                    // Wyczysc ciasteczka po stronie klienta (na wszelki wypadek)
                     document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                     document.cookie = "refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    // Przekieruj na stronę logowania
+                    // Przekieruj na strone logowania
                     window.location.href = '/start/';
                 } else {
                     console.error("Logout failed:", data.message);
@@ -67,4 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = '/start/';
             });
     });
+    function toggleCompleted(taskId, completed) {
+        fetch(`http://127.0.0.1:8000/api/tasks/${taskId}/`, {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify({ completed: completed })
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Update failed");
+                return res.json();
+            })
+            .then(() => {
+                loadTasks(); //jesli masz funkcje do odswiezania
+            })
+            .catch(err => console.error("Update error:", err));
+    }
 });

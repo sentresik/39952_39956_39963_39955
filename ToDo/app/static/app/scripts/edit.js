@@ -13,9 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Uzyj task.title zamiast task.name
                     const li = document.createElement('li');
                     li.innerHTML = `
-                        <span contenteditable="true" class="editable">${task.title}</span>
-                        <button class="deleteBtn">Delete</button>
-                        <button class="saveBtn">Save</button>
+                            <span contenteditable="true" class="editable">${task.title}</span>
+                            <div class="btn-group">
+                                <button class="deleteBtn">Delete</button>
+                                <button class="saveBtn">Save</button>
+                            </div>
                     `;
 
                     const span = li.querySelector('.editable');

@@ -1,4 +1,6 @@
-/* RESET I TYPOGRAFIA */
+/* =======================
+   RESET I TYPOGRAFIA
+======================= */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -16,7 +18,9 @@ body {
     padding: 2rem;
 }
 
-/* OGOLNE ELEMENTY */
+/* =======================
+   TYPOGRAFIA I OGOLNE ELEMENTY
+======================= */
 h1 {
     font-size: 2rem;
     margin-bottom: 1rem;
@@ -42,7 +46,41 @@ a {
         text-decoration: underline;
     }
 
-/* FORMULARZE */
+/* =======================
+   KONTENER
+======================= */
+.container {
+    background-color: #1c1c1c;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* =======================
+   FORMULARZE
+======================= */
+#taskForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 1rem;
+}
+
+    #taskForm input {
+        flex: 1;
+        margin-right: 0;
+    }
+
+    #taskForm button {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
 input[type="email"],
 input[type="password"],
 input[type="text"] {
@@ -62,7 +100,9 @@ input:focus {
     outline: none;
 }
 
-/* PRZYCISKI */
+/* =======================
+   PRZYCISKI
+======================= */
 button {
     padding: 0.75rem 1rem;
     background-color: #b300d6;
@@ -91,7 +131,9 @@ button {
     margin-right: 0.5rem;
 }
 
-/* LISTA ZADAN */
+/* =======================
+   LISTA ZADAN - WIDOK I EDYCJA
+======================= */
 ul#taskList {
     list-style: none;
     padding: 0;
@@ -101,60 +143,77 @@ ul#taskList {
 }
 
     ul#taskList li {
-        background-color: #1e1e1e;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background-color: #1e1e1e;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
         color: #eee;
+        transition: background-color 0.3s, color 0.3s;
+        max-width: 100%;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
-        ul#taskList li span[contenteditable="true"] {
-            flex: 1;
-            margin-right: 1rem;
-            border: 1px dashed transparent;
-            padding: 0.2rem;
+        /* WIDOK - checkbox + tekst */
+        ul#taskList li input[type="checkbox"] {
+            flex-shrink: 0;
+            transform: scale(1.2);
+            accent-color: #b300d6;
+            margin-top: 0.25rem;
         }
 
-            ul#taskList li span[contenteditable="true"]:focus {
-                border-color: #b300d6;
-                background-color: #2f2f2f;
-            }
+        /* WIDOK - tekst zadania */
+        ul#taskList li span {
+            flex: 1;
+            display: block;
+            font-size: 1rem;
+            line-height: 1.4;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            max-width: 100%;
+        }
 
-/* FORMULARZ ZADAN */
-#taskForm {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 1rem;
-}
+        /* ZADANIE UKONCZONE */
+        ul#taskList li.completed {
+            background-color: #2a452a;
+            color: #aaa;
+            text-decoration: line-through;
+        }
 
-    #taskForm input {
-        flex: 1;
-        margin-right: 0;
-    }
+        /* =======================
+           EDYCJA: SPAN + PRZYCISKI
+        ======================= */
+        ul#taskList li .editable {
+            flex: 1;
+            min-width: 0;
+            padding: 0.5rem;
+            background-color: transparent;
+            border: 1px dashed #444;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #eee;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            outline: none;
+        }
 
-    #taskForm button {
-        width: 100%;
-        margin-top: 0.5rem;
-    }
+        /* Grupa przyciskow */
+        ul#taskList li .btn-group {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+        }
 
-/* KONTENER */
-.container {
-    background-color: #1c1c1c;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-}
-
-/* KOMUNIKATY */
+/* =======================
+   KOMUNIKATY I ANIMACJE
+======================= */
 #errorMsg {
     color: red;
     font-size: 0.95rem;
@@ -195,5 +254,31 @@ ul#taskList {
     100% {
         opacity: 0;
         transform: translateY(-20px);
+    }
+}
+
+/* =======================
+   RESPONSYWNOSC
+======================= */
+@media (max-width: 500px) {
+    ul#taskList li {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        ul#taskList li input[type="checkbox"] {
+            margin-bottom: 0.5rem;
+        }
+
+        ul#taskList li .btn-group {
+            justify-content: flex-end;
+        }
+
+        ul#taskList li .editable {
+            width: 100%;
+        }
+
+    .container {
+        padding: 1rem;
     }
 }
